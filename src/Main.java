@@ -1,17 +1,47 @@
-// Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
-// then press Enter. You can now see whitespace characters in your code.
+import Exception.WrongLoginException;
+import Exception.WrongPasswordException;
 public class Main {
-    public static void main(String[] args) {
-        // Press Alt+Enter with your caret at the highlighted text to see how
-        // IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+    private static final String VALIDATE_PATTERN = "^[\\w{1,20}]+$";
 
-        // Press Shift+F10 or click the green arrow button in the gutter to run the code.
-        for (int i = 1; i <= 5; i++) {
+    public static void main(String[] agrs) {
+        check ("login","pass","pass");
+        check ("login11111111111111111111111","pass","pass");
+        check ("login","password","pass");
+        check ("login@","pass","pass");
+        check ("login","pass@","pass@");
+    }
+    private static boolean check (String login, String password, String confirmPassword) {
+        boolean isCorrect = true;
 
-            // Press Shift+F9 to start debugging your code. We have set one breakpoint
-            // for you, but you can always add more by pressing Ctrl+F8.
-            System.out.println("i = " + i);
+        try {
+            checkLogin(login);
+            checkPassword(password, confirmPassword);
+        } catch (WrongLoginException e){
+            System.out.println("Ошибка с введеным логином: "+ e.getMessage());
+            isCorrect = false;
+        }catch (WrongPasswordException e) {
+            System.out.println("Ошибка с введеным паролем: " + e.getMessage());
+            isCorrect = false;
+        }
+        if (isCorrect){
+            System.out.println("логин и пароль верные");
+        }
+
+        return isCorrect;
+    }
+    private static void checkLogin (String login) throws WrongLoginException {
+        if (!login.matches(VALIDATE_PATTERN)) {
+            throw new WrongLoginException("Логин может состоять только из латинских букв, цифр и андерскора");
+        } else if (login.length()>20) {
+            throw new WrongLoginException("Логин не должен превышать 20 символов");
+
+        }
+    }
+    private static void checkPassword (String password,String cofirmPassword) throws WrongPasswordException {
+        if (!password.matches(VALIDATE_PATTERN)) {
+            throw new WrongPasswordException("Пароль может состоять только из латинских букв, цифр и андерскора");
+        } else if (!password.equals(cofirmPassword)){
+            throw new WrongPasswordException("Пароли должны совпадать");
         }
     }
 }
